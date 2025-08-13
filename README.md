@@ -18,3 +18,10 @@ app.listen(5000, () => {
 
 npm i nodemon -D
 "dev": "nodemon backend/server.js"
+
+.................................................
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+....................................
