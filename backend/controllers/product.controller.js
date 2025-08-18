@@ -22,7 +22,7 @@ export const createProduct = async (req, res) => {
   if (!productdata.name || !productdata.price || !productdata.image) {
     return res
       .status(400)
-      .json({ success: false, massage: "please provide all fileds" });
+      .json({ success: false, message: "please provide all fields" });
   }
 
   const newProduct = new product(productdata);
@@ -31,8 +31,8 @@ export const createProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
-    console.error("error in create product:", error.massage);
-    res.status(500).json({ success: false, massage: "server error" });
+    console.error("error in create product:", error.message);
+    res.status(500).json({ success: false, message: "server error" });
   }
 };
 

@@ -18,5 +18,3 @@ app.listen(5000, () => {
   connectDB();
   console.log("server start at http://localhost:5000");
 });
-
-//ogJyNEENjV1YUzLf
