@@ -1,11 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 const router = express.Router();
-import { getProducts } from "../controllers/product.controller.js";
-import { createProduct } from "../controllers/product.controller.js";
-import { deleteProduct } from "../controllers/product.controller.js";
-import { getsingleProductbyid } from "../controllers/product.controller.js";
-import { updateProductbyid } from "../controllers/product.controller.js";
+import { getProducts, createProduct, deleteProduct, getsingleProductbyid, updateProductbyid } from "../controllers/product.controller.js";
+// import { createProduct } from "../controllers/product.controller.js";
+// import { deleteProduct } from "../controllers/product.controller.js";
+// import { getsingleProductbyid } from "../controllers/product.controller.js";
+// import { updateProductbyid } from "../controllers/product.controller.js";
 
 // Middleware to validate MongoDB ID
 const validateObjectId = (req, res, next) => {
