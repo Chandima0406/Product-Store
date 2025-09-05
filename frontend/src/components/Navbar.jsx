@@ -15,7 +15,7 @@ const Navbar = () => {
   
   return (
     <Container 
-      maxW={"1140px"} 
+      maxW={"1600px"} 
       px={4} 
       bg={bgColor}
       backdropFilter="blur(10px)"

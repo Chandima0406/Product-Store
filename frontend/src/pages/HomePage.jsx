@@ -48,7 +48,7 @@ const HomePage = () => {
         <Container maxW={"container.xl"}>
           <VStack spacing={8}>
             <Heading as="h2" size="xl" color="blue.600">
-              Why Choose Us?
+              Why Choose Us
             </Heading>
             
             <Flex
