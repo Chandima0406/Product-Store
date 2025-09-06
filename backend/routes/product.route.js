@@ -1,11 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
 const router = express.Router();
-import { getProducts, createProduct, deleteProduct, getsingleProductbyid, updateProductbyid } from "../controllers/product.controller.js";
-// import { createProduct } from "../controllers/product.controller.js";
-// import { deleteProduct } from "../controllers/product.controller.js";
-// import { getsingleProductbyid } from "../controllers/product.controller.js";
-// import { updateProductbyid } from "../controllers/product.controller.js";
+import { 
+  getProducts, 
+  createProduct, 
+  deleteProduct, 
+  getsingleProductbyid, 
+  updateProductbyid,
+  getProductsByCategory,
+  getCategories 
+} from "../controllers/product.controller.js";
 
 // Middleware to validate MongoDB ID
 const validateObjectId = (req, res, next) => {
@@ -18,19 +22,28 @@ const validateObjectId = (req, res, next) => {
   next();
 };
 
-//create products
-router.post("/", createProduct);
-
-// DELETE product by ID
-router.delete("/:id", validateObjectId, deleteProduct);
-
-// GET all products
+// GET all products (with optional category filtering via query parameter)
+// Example: /api/products?category=Electronics
 router.get("/", getProducts);
+
+// GET products by specific category
+// Example: /api/products/category/Electronics
+router.get("/category/:category", getProductsByCategory);
+
+// GET all available categories
+// Example: /api/products/categories
+router.get("/categories", getCategories);
 
 // GET single product by ID
 router.get("/:id", validateObjectId, getsingleProductbyid);
 
+// CREATE new product
+router.post("/", createProduct);
+
 // UPDATE product by ID (partial update allowed)
 router.put("/:id", validateObjectId, updateProductbyid);
+
+// DELETE product by ID
+router.delete("/:id", validateObjectId, deleteProduct);
 
 export default router;
