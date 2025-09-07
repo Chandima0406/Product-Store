@@ -25,3 +25,6 @@ npm i nodemon -D
 .env.*
 !.env.example
 ....................................
+
+
+npm i zustand

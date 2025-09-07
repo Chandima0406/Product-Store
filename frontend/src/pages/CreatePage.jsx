@@ -11,7 +11,7 @@ import {
   Textarea,
   useToast,
   Flex,
-  Select, // Added Select component
+  Select,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -87,6 +87,10 @@ const CreatePage = () => {
       newErrors.category = "Category is required";
     }
 
+    if (!newProduct.description.trim()) {
+      newErrors.description = "Description is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -107,14 +111,40 @@ const CreatePage = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // In a real application, you would send the data to your backend here
-      console.log("Product data to be saved:", {
+      // Prepare data for API
+      const productData = {
         ...newProduct,
         price: parseFloat(newProduct.price) // Convert string to number
+      };
+
+      // Send POST request to backend API
+      const response = await fetch('http://localhost:5000/api/products/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle backend validation errors
+        if (data.errors) {
+          const backendErrors = {};
+          data.errors.forEach(error => {
+            // Extract field name from error message if possible
+            if (error.includes('name')) backendErrors.name = error;
+            else if (error.includes('price')) backendErrors.price = error;
+            else if (error.includes('image')) backendErrors.image = error;
+            else if (error.includes('category')) backendErrors.category = error;
+            else if (error.includes('description')) backendErrors.description = error;
+          });
+          setErrors(backendErrors);
+          throw new Error(data.message || 'Validation failed');
+        }
+        throw new Error(data.message || 'Failed to create product');
+      }
 
       toast({
         title: "Product created successfully!",
@@ -124,6 +154,7 @@ const CreatePage = () => {
         isClosable: true,
       });
 
+      // Reset form
       setNewProduct({ 
         name: "", 
         price: "", 
@@ -131,13 +162,18 @@ const CreatePage = () => {
         description: "", 
         category: "Other" 
       });
+      
+      // Navigate to products page
       navigate("/products");
+
     } catch (error) {
+      console.error("Create product error:", error);
+      
       toast({
         title: "Error creating product.",
         description: error.message || "Please try again later.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     } finally {
