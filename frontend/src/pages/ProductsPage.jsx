@@ -26,10 +26,15 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  IconButton
+  IconButton,
 } from "@chakra-ui/react";
 import { useSearchParams } from "react-router-dom";
-import { BsFilter, BsArrowCounterclockwise, BsSearch, BsX } from "react-icons/bs";
+import {
+  BsFilter,
+  BsArrowCounterclockwise,
+  BsSearch,
+  BsX,
+} from "react-icons/bs";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -40,65 +45,69 @@ const ProductsPage = () => {
   const toast = useToast();
 
   // Get category from URL query parameters
-  const category = searchParams.get('category');
-  const [selectedCategory, setSelectedCategory] = useState(category || '');
-  const [searchQuery, setSearchQuery] = useState('');
+  const category = searchParams.get("category");
+  const [selectedCategory, setSelectedCategory] = useState(category || "");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [
-    'All Categories',
-    'Electronics',
-    'Clothing',
-    'Books',
-    'Home & Kitchen',
-    'Sports & Outdoors',
-    'Beauty & Personal Care',
-    'Toys & Games',
-    'Food & Beverages',
-    'Other'
+    "All Categories",
+    "Electronics",
+    "Clothing",
+    "Books",
+    "Home & Kitchen",
+    "Sports & Outdoors",
+    "Beauty & Personal Care",
+    "Toys & Games",
+    "Food & Beverages",
+    "Other",
   ];
 
-  const fetchProducts = useCallback(async (categoryFilter = '') => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      let apiUrl = 'http://localhost:5000/api/products';
-      
-      // Add category filter if specified
-      if (categoryFilter && categoryFilter !== 'All Categories') {
-        apiUrl += `?category=${encodeURIComponent(categoryFilter)}`;
+  const fetchProducts = useCallback(
+    async (categoryFilter = "") => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        let apiUrl = "http://localhost:5000/api/products";
+
+        // Add category filter if specified
+        if (categoryFilter && categoryFilter !== "All Categories") {
+          apiUrl += `?category=${encodeURIComponent(categoryFilter)}`;
+        }
+
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          throw new Error(
+            `Server returned ${response.status}: ${response.statusText}`
+          );
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          setProducts(result.data);
+          setFilteredProducts(result.data); // Initialize filtered products
+        } else {
+          throw new Error(result.message || "Failed to fetch products");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError(error.message || "Failed to load products");
+
+        toast({
+          title: "Error loading products",
+          description: error.message || "Please try again later",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsLoading(false);
       }
-      
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setProducts(result.data);
-        setFilteredProducts(result.data); // Initialize filtered products
-      } else {
-        throw new Error(result.message || 'Failed to fetch products');
-      }
-      
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setError(error.message || "Failed to load products");
-      
-      toast({
-        title: "Error loading products",
-        description: error.message || "Please try again later",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
+    },
+    [toast]
+  );
 
   // Filter products based on search query
   const filterProducts = useCallback(() => {
@@ -108,12 +117,13 @@ const ProductsPage = () => {
     }
 
     const query = searchQuery.toLowerCase().trim();
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(query) ||
-      product.description.toLowerCase().includes(query) ||
-      (product.category && product.category.toLowerCase().includes(query))
+    const filtered = products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query) ||
+        (product.category && product.category.toLowerCase().includes(query))
     );
-    
+
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
@@ -128,10 +138,10 @@ const ProductsPage = () => {
   const handleCategoryChange = (e) => {
     const newCategory = e.target.value;
     setSelectedCategory(newCategory);
-    setSearchQuery(''); // Clear search when category changes
-    
+    setSearchQuery(""); // Clear search when category changes
+
     // Update URL query parameters
-    if (newCategory && newCategory !== 'All Categories') {
+    if (newCategory && newCategory !== "All Categories") {
       setSearchParams({ category: newCategory });
     } else {
       setSearchParams({});
@@ -143,7 +153,7 @@ const ProductsPage = () => {
   };
 
   const clearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   const handleRetry = () => {
@@ -152,7 +162,7 @@ const ProductsPage = () => {
 
   const displayedProducts = searchQuery ? filteredProducts : products;
   const hasSearchResults = displayedProducts.length > 0;
-  const hasActiveSearch = searchQuery.trim() !== '';
+  const hasActiveSearch = searchQuery.trim() !== "";
 
   if (error) {
     return (
@@ -163,10 +173,10 @@ const ProductsPage = () => {
             <AlertTitle>Error Loading Products!</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Box>
-          <Button 
-            colorScheme="red" 
-            variant="outline" 
-            size="sm" 
+          <Button
+            colorScheme="red"
+            variant="outline"
+            size="sm"
             onClick={handleRetry}
             leftIcon={<BsArrowCounterclockwise />}
           >
@@ -185,18 +195,18 @@ const ProductsPage = () => {
         </Heading>
 
         {/* Search and Filter Section */}
-        <Box 
-          bg="white" 
-          p={6} 
-          borderRadius="lg" 
-          boxShadow="sm" 
+        <Box
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          boxShadow="sm"
           borderWidth="1px"
         >
           <VStack spacing={6} align="stretch">
             <Text fontWeight="bold" fontSize="lg" color="gray.700">
               Find Products
             </Text>
-            
+
             {/* Search Bar */}
             <Box>
               <Text fontWeight="medium" mb={2} color="gray.600">
@@ -228,9 +238,9 @@ const ProductsPage = () => {
             </Box>
 
             {/* Category Filter */}
-            <Flex 
-              direction={{ base: "column", md: "row" }} 
-              gap={4} 
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              gap={4}
               align={{ base: "stretch", md: "center" }}
             >
               <Box flex="1">
@@ -253,17 +263,17 @@ const ProductsPage = () => {
                   ))}
                 </Select>
               </Box>
-              
-              {(selectedCategory && selectedCategory !== 'All Categories') && (
+
+              {selectedCategory && selectedCategory !== "All Categories" && (
                 <Box>
                   <Text fontWeight="medium" mb={2} color="gray.600">
                     Active Filter:
                   </Text>
-                  <Badge 
-                    colorScheme="blue" 
-                    fontSize="md" 
-                    px={4} 
-                    py={2} 
+                  <Badge
+                    colorScheme="blue"
+                    fontSize="md"
+                    px={4}
+                    py={2}
                     borderRadius="full"
                     textTransform="capitalize"
                   >
@@ -277,14 +287,14 @@ const ProductsPage = () => {
             {hasActiveSearch && (
               <Box>
                 <Text color="gray.600" fontSize="sm">
-                  {hasSearchResults 
-                    ? `Found ${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''} matching "${searchQuery}"`
-                    : `No products found matching "${searchQuery}"`
-                  }
-                  {selectedCategory && selectedCategory !== 'All Categories' 
-                    ? ` in ${selectedCategory} category` 
-                    : ''
-                  }
+                  {hasSearchResults
+                    ? `Found ${filteredProducts.length} product${
+                        filteredProducts.length !== 1 ? "s" : ""
+                      } matching "${searchQuery}"`
+                    : `No products found matching "${searchQuery}"`}
+                  {selectedCategory && selectedCategory !== "All Categories"
+                    ? ` in ${selectedCategory} category`
+                    : ""}
                 </Text>
               </Box>
             )}
@@ -308,31 +318,24 @@ const ProductsPage = () => {
             ))}
           </SimpleGrid>
         ) : displayedProducts.length === 0 ? (
-          <Box 
-            textAlign="center" 
-            py={16} 
-            bg="gray.50" 
-            borderRadius="lg"
-          >
+          <Box textAlign="center" py={16} bg="gray.50" borderRadius="lg">
             <VStack spacing={4}>
               <Text fontSize="xl" color="gray.500" fontWeight="medium">
-                {hasActiveSearch 
+                {hasActiveSearch
                   ? `No products found matching "${searchQuery}"`
-                  : selectedCategory && selectedCategory !== 'All Categories' 
-                    ? `No products found in "${selectedCategory}" category.`
-                    : 'No products available yet.'
-                }
+                  : selectedCategory && selectedCategory !== "All Categories"
+                  ? `No products found in "${selectedCategory}" category.`
+                  : "No products available yet."}
               </Text>
               <Text color="gray.400">
-                {hasActiveSearch 
-                  ? 'Try a different search term or browse all categories.'
-                  : selectedCategory && selectedCategory !== 'All Categories' 
-                    ? 'Try selecting a different category or check back later.'
-                    : 'Be the first to add a product!'
-                }
+                {hasActiveSearch
+                  ? "Try a different search term or browse all categories."
+                  : selectedCategory && selectedCategory !== "All Categories"
+                  ? "Try selecting a different category or check back later."
+                  : "Be the first to add a product!"}
               </Text>
-              <Button 
-                colorScheme="blue" 
+              <Button
+                colorScheme="blue"
                 onClick={handleRetry}
                 leftIcon={<BsArrowCounterclockwise />}
                 size="md"
@@ -345,22 +348,26 @@ const ProductsPage = () => {
           <>
             <Box>
               <Text color="gray.600" fontSize="md" mb={4}>
-                Showing {displayedProducts.length} product{displayedProducts.length !== 1 ? 's' : ''}
-                {hasActiveSearch ? ` matching "${searchQuery}"` : ''}
-                {selectedCategory && selectedCategory !== 'All Categories' 
-                  ? ` in "${selectedCategory}"` 
-                  : ' across all categories'
-                }
+                Showing {displayedProducts.length} product
+                {displayedProducts.length !== 1 ? "s" : ""}
+                {hasActiveSearch ? ` matching "${searchQuery}"` : ""}
+                {selectedCategory && selectedCategory !== "All Categories"
+                  ? ` in "${selectedCategory}"`
+                  : " across all categories"}
               </Text>
             </Box>
-            
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="100%">
+
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 3 }}
+              spacing={6}
+              w="100%"
+            >
               {displayedProducts.map((product) => (
-                <Card 
-                  key={product._id || product.id} 
-                  borderRadius="lg" 
-                  overflow="hidden" 
-                  boxShadow="md" 
+                <Card
+                  key={product._id || product.id}
+                  borderRadius="lg"
+                  overflow="hidden"
+                  boxShadow="md"
                   transition="transform 0.2s ease"
                   _hover={{ transform: "translateY(-4px)", boxShadow: "lg" }}
                   height="100%"
@@ -378,23 +385,25 @@ const ProductsPage = () => {
                       fallbackSrc="https://via.placeholder.com/300x200?text=No+Image"
                     />
                     <Stack mt="5" spacing="3">
-                      <Heading size="md" noOfLines={1}>{product.name}</Heading>
-                      
+                      <Heading size="md" noOfLines={1}>
+                        {product.name}
+                      </Heading>
+
                       {product.category && (
-                        <Badge 
-                          colorScheme="blue" 
-                          width="fit-content" 
+                        <Badge
+                          colorScheme="blue"
+                          width="fit-content"
                           textTransform="capitalize"
                           fontSize="xs"
                         >
                           {product.category.toLowerCase()}
                         </Badge>
                       )}
-                      
+
                       <Text color="blue.600" fontSize="xl" fontWeight="bold">
                         ${parseFloat(product.price).toFixed(2)}
                       </Text>
-                      
+
                       <Text noOfLines={3} color="gray.600" fontSize="sm">
                         {product.description}
                       </Text>
@@ -402,9 +411,9 @@ const ProductsPage = () => {
                   </CardBody>
                   <Divider />
                   <CardFooter>
-                    <Button 
-                      variant="solid" 
-                      colorScheme="blue" 
+                    <Button
+                      variant="solid"
+                      colorScheme="blue"
                       width="full"
                       size="md"
                     >
